@@ -1,5 +1,6 @@
 This kernel is from 
 PROCESSOR-SDK-LINUX-AM335X v04.00
+http://www.ti.com/tool/PROCESSOR-SDK-AM335X
 
 This is a shallow clone starting with the release
 for the sdk found in the board_support subdirectory
@@ -10,7 +11,8 @@ local copy of the ti sdk kernel git repo).
 
 git clone --depth 2 file:///home/aaron/gs/linux/ti/linux-4.9.28+gitAUTOINC+eed43d1050-geed43d1050
 
-
 git filter-branch -- --all
 
+The full sdk repo is located here
+https://git.ti.com/processor-sdk/processor-sdk-linux
 
