@@ -8,7 +8,7 @@
 /dts-v1/;
 
 #include "am33xx.dtsi"
-#include "am335x-sf2-common.dtsi"
+#include "am335x-bone-common.dtsi"
 #include <dt-bindings/display/tda998x.h>
 
 / {
