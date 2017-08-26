@@ -547,6 +547,10 @@ static void omap_rtc_power_off(void)
 	val = rtc_readl(omap_rtc_power_off_rtc, OMAP_RTC_PMIC_REG);
 	val |= OMAP_RTC_PMIC_POWER_EN_EN | OMAP_RTC_PMIC_EXT_WKUP_POL(0) |
 	       OMAP_RTC_PMIC_EXT_WKUP_EN(0);
+
+ deassert:	
+	pr_err("omap_rtc_power_off: deasserting OMAP_RTC_PMIC_POWER_EN\n");
+
 	rtc_writel(omap_rtc_power_off_rtc, OMAP_RTC_PMIC_REG, val);
 	omap_rtc_power_off_rtc->type->lock(omap_rtc_power_off_rtc);
 
@@ -557,7 +561,11 @@ static void omap_rtc_power_off(void)
 	 */
 	mdelay(2500);
 
+	val = rtc_readl(omap_rtc_power_off_rtc, OMAP_RTC_PMIC_REG);
+	pr_err("val = 0x%x\n",val);
+	
 	pr_err("rtc_power_off failed, bailing out.\n");
+	goto deassert;
 }
 
 static void omap_rtc_cleanup_pm_power_off(struct omap_rtc *rtc)
@@ -895,9 +903,12 @@ static int omap_rtc_probe(struct platform_device *pdev)
 	omap_rtc_power_off_rtc = rtc;
 
 	if (rtc->is_pmic_controller) {
+		dev_err(&pdev->dev, "omap_rtc_probe: rtc is_pmic_controller");
 		if (!pm_power_off)
 			pm_power_off = omap_rtc_power_off;
 	}
+	else
+		dev_err(&pdev->dev, "omap_rtc_probe: rtc NOT is_pmic_controller");
 
 	rtc->rtc = devm_rtc_device_register(&pdev->dev, pdev->name,
 			&omap_rtc_ops, THIS_MODULE);
