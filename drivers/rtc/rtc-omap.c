@@ -545,15 +545,26 @@ static void omap_rtc_power_off(void)
 
 	/* Set PMIC power enable and EXT_WAKEUP in case PB power on is used */
 	val = rtc_readl(omap_rtc_power_off_rtc, OMAP_RTC_PMIC_REG);
+#if 0  
 	val |= OMAP_RTC_PMIC_POWER_EN_EN | OMAP_RTC_PMIC_EXT_WKUP_POL(0) |
 	       OMAP_RTC_PMIC_EXT_WKUP_EN(0);
+#else
+	val |= OMAP_RTC_PMIC_POWER_EN_EN;  /* allow turn off by ALARM2 */
+	val &= ~OMAP_RTC_PMIC_EXT_WKUP_POL(0); /* active high - ext wakeup tied to GND */
+	val &= ~OMAP_RTC_PMIC_EXT_WKUP_EN(0); /* disable ext wakeup (redundant since GND) */
+	
+#endif
 
- deassert:	
 	pr_err("omap_rtc_power_off: deasserting OMAP_RTC_PMIC_POWER_EN\n");
+	pr_err("value to be written to OMAP_RTC_PMIC_REG = 0x%x\n",val);
 
 	rtc_writel(omap_rtc_power_off_rtc, OMAP_RTC_PMIC_REG, val);
 	omap_rtc_power_off_rtc->type->lock(omap_rtc_power_off_rtc);
 
+	val = rtc_readl(omap_rtc_power_off_rtc, OMAP_RTC_PMIC_REG);
+	pr_err("read back value OMAP_RTC_PMIC_REG = 0x%x\n",val);
+
+	pr_err("waiting for power off...\n");
 	/*
 	 * Wait for alarm to trigger (within two seconds) and external PMIC to
 	 * power off the system. Add a 500 ms margin for external latencies
@@ -561,11 +572,26 @@ static void omap_rtc_power_off(void)
 	 */
 	mdelay(2500);
 
-	val = rtc_readl(omap_rtc_power_off_rtc, OMAP_RTC_PMIC_REG);
-	pr_err("val = 0x%x\n",val);
-	
 	pr_err("rtc_power_off failed, bailing out.\n");
-	goto deassert;
+
+	val = rtc_readl(omap_rtc_power_off_rtc, OMAP_RTC_STATUS_REG);
+	pr_err("OMAP_RTC_STATUS_REG  = 0x%x\n",val);
+        pr_err("ALARM2   = %d\n",  (val >> 7) & 1);
+        pr_err("ALARM    = %d\n",  (val >> 6) & 1);
+        pr_err("1D_EVENT = %d\n",  (val >> 5) & 1);
+        pr_err("1H_EVENT = %d\n",  (val >> 4) & 1);
+        pr_err("1M_EVENT = %d\n",  (val >> 3) & 1);
+        pr_err("1S_EVENT = %d\n",  (val >> 2) & 1);
+        pr_err("RUN      = %d\n",  (val >> 1) & 1);
+        pr_err("BUSY     = %d\n",  (val >> 0) & 1);
+ 
+	pr_err("Going into endless loop.\n");
+	
+ busy_loop:
+
+	mdelay(2500);
+
+	goto busy_loop;
 }
 
 static void omap_rtc_cleanup_pm_power_off(struct omap_rtc *rtc)
