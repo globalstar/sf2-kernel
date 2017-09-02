@@ -34,7 +34,7 @@
 
 
 &mmc2 {
-	vmmc-supply = <&vmmcsd_fixed>;
+	vmmc-supply = <&vaux33_reg>;
 	pinctrl-names = "default";
 	pinctrl-0 = <&emmc_pins>;
 	bus-width = <8>;
