@@ -543,12 +543,29 @@ static void omap_rtc_power_off(void)
 	omap_rtc_power_off_rtc->type->unlock(omap_rtc_power_off_rtc);
 	omap_rtc_power_off_program(rtc->dev.parent);
 
+	val = rtc_readl(omap_rtc_power_off_rtc, OMAP_RTC_STATUS_REG);
+	pr_err("OMAP_RTC_STATUS_REG  = 0x%x\n",val);
+	if ( (val >>  7) & 1 ) pr_err("ALARM2   is set\n");
+	if ( (val >>  6) & 1 ) pr_err("ALARM    is set\n");
+	if ( (val >>  5) & 1 ) pr_err("1D_EVENT is set\n");
+	if ( (val >>  4) & 1 ) pr_err("1H_EVENT is set\n");
+	if ( (val >>  3) & 1 ) pr_err("1M_EVENT is set\n");
+	if ( (val >>  2) & 1 ) pr_err("1S_EVENT is set\n");
+	if ( (val >>  1) & 1 ) pr_err("RUN      is set\n");
+	if ( (val >>  0) & 1 ) pr_err("BUSY     is set\n");
+
+	
 	/* Set PMIC power enable and EXT_WAKEUP in case PB power on is used */
 	val = rtc_readl(omap_rtc_power_off_rtc, OMAP_RTC_PMIC_REG);
 #if 0  
 	val |= OMAP_RTC_PMIC_POWER_EN_EN | OMAP_RTC_PMIC_EXT_WKUP_POL(0) |
 	       OMAP_RTC_PMIC_EXT_WKUP_EN(0);
 #else
+
+	val &= 0x0f000; /* get EXT_WAKEUP_STATUS bits */
+	val |= OMAP_RTC_PMIC_POWER_EN_EN; /* disable PWR_ENABLE_EN and clear wakeup bits */
+	rtc_writel(omap_rtc_power_off_rtc, OMAP_RTC_PMIC_REG, val);
+
 	val |= OMAP_RTC_PMIC_POWER_EN_EN;  /* allow turn off by ALARM2 */
 	val &= ~OMAP_RTC_PMIC_EXT_WKUP_POL(0); /* active high - ext wakeup tied to GND */
 	val &= ~OMAP_RTC_PMIC_EXT_WKUP_EN(0); /* disable ext wakeup (redundant since GND) */
@@ -576,15 +593,15 @@ static void omap_rtc_power_off(void)
 
 	val = rtc_readl(omap_rtc_power_off_rtc, OMAP_RTC_STATUS_REG);
 	pr_err("OMAP_RTC_STATUS_REG  = 0x%x\n",val);
-        pr_err("ALARM2   = %d\n",  (val >> 7) & 1);
-        pr_err("ALARM    = %d\n",  (val >> 6) & 1);
-        pr_err("1D_EVENT = %d\n",  (val >> 5) & 1);
-        pr_err("1H_EVENT = %d\n",  (val >> 4) & 1);
-        pr_err("1M_EVENT = %d\n",  (val >> 3) & 1);
-        pr_err("1S_EVENT = %d\n",  (val >> 2) & 1);
-        pr_err("RUN      = %d\n",  (val >> 1) & 1);
-        pr_err("BUSY     = %d\n",  (val >> 0) & 1);
- 
+	if ( (val >>  7) & 1 ) pr_err("ALARM2   is set\n");
+	if ( (val >>  6) & 1 ) pr_err("ALARM    is set\n");
+	if ( (val >>  5) & 1 ) pr_err("1D_EVENT is set\n");
+	if ( (val >>  4) & 1 ) pr_err("1H_EVENT is set\n");
+	if ( (val >>  3) & 1 ) pr_err("1M_EVENT is set\n");
+	if ( (val >>  2) & 1 ) pr_err("1S_EVENT is set\n");
+	if ( (val >>  1) & 1 ) pr_err("RUN      is set\n");
+	if ( (val >>  0) & 1 ) pr_err("BUSY     is set\n");
+
 	pr_err("Going into endless loop.\n");
 	
  busy_loop:
