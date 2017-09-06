@@ -568,7 +568,7 @@ static void omap_rtc_power_off(void)
 
 	val |= OMAP_RTC_PMIC_POWER_EN_EN;  /* allow turn off by ALARM2 */
 	val &= ~OMAP_RTC_PMIC_EXT_WKUP_POL(0); /* active high - ext wakeup tied to GND */
-	val &= ~OMAP_RTC_PMIC_EXT_WKUP_EN(0); /* disable ext wakeup (redundant since GND) */
+	val |= OMAP_RTC_PMIC_EXT_WKUP_EN(0); /* enable ext wakeup (testing for TI e2e) */
 	
 #endif
 
