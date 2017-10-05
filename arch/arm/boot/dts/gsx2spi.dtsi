@@ -1,0 +1,55 @@
+/*
+ * Copyright (C) 2012 Texas Instruments Incorporated - http://www.ti.com/
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License version 2 as
+ * published by the Free Software Foundation.
+ */
+
+#include <dt-bindings/pinctrl/am33xx.h>
+
+/ {
+    ocp {
+        spislave0: spislave@481a0000 { 
+            compatible = "gs,omap4-x2spi";
+            #address-cells = <1>;
+            #size-cells = <0>;
+            reg = <0x481a0000 0x400>;
+            interrupts = <125>;
+            ti,hwmods = "spi1";
+            ti,pindir-d0-in-d1-out;
+            dmas = <&edma 42 0
+                    &edma 43 0>;
+            dma-names = "tx0", "rx0";
+ 	    pinctrl-names = "default";
+            pinctrl-0 = <&x2spi_spi_pins>;
+            gpio-srdy = <&gpio0 16 0>;
+            gpio-mrdy = <&gpio3 3 0>;
+            status = "okay";
+        };
+    };
+};
+
+&am33xx_pinmux {
+
+
+    x2spi_spi_pins: pinmx2spi_spi_pins {
+        pinctrl-single,pins = <
+            0x114 ( PIN_INPUT  | MUX_MODE7 ) /* (J16) [MRDY] PINS[69]=0x2b gmii1_txen.gpio3[3] */
+            0x11c ( PIN_OUTPUT | MUX_MODE7 ) /* (J18) [SRDY] PINS[71]=0x0b gmii1_txd3.gpio0[16] */
+            0x108 ( PIN_INPUT  | MUX_MODE2 ) /* (H16) [CLK]  PINS[66]=0x2b gmii1_col.spi1_sclk */
+            0x10c ( PIN_INPUT  | MUX_MODE2 ) /* (H17) [MOSI] PINS[67]=0x2b gmii1_crs.spi1_d0 */
+            0x110 ( PIN_OUTPUT | MUX_MODE2 ) /* (J15) [MISO] PINS[68]=0x0b gmii1_rxer.spi1_d1 */
+            0x144 ( PIN_INPUT  | MUX_MODE2 ) /* (H18) [CS]   PINS[81]=0x2b rmii1_refclk.spi1_cs0 */
+            0x24 ( PIN_OUTPUT  | MUX_MODE7 ) /* (T10) [VDD_3V3_AS_EN]   PINS[23] gpmc_ad9 */
+            0x38 ( PIN_OUTPUT  | MUX_MODE7 ) /* (V13) [T-ATLAS-PWR-ON]   PINS[46] gpmc_ad14 This must be set low before Atlas/Aspen receive power!*/
+            0x14c ( PIN_INPUT  | MUX_MODE7 ) /* (M18) [NAS-WAKE-UP]   PINS[1] mdc */
+            0x118 ( PIN_INPUT | MUX_MODE7 ) /* (J17) [NAS_ATLAS-REGEN]   PINS[100] gmii1_rxdv */
+            0x120 ( PIN_INPUT  | MUX_MODE7 ) /* (K15) [OB_RST_FLAG_33]   PINS[17] gmii1_txd2 */
+        >;
+    };
+};
+
+
+/* Tattoo this on the inside of your eyelids!  */
+/* cat /sys/kernel/debug/pinctrl/44e10800.pinmux/pins  */
