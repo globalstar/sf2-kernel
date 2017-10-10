@@ -1,0 +1,86 @@
+/*
+ * Copyright (C) 2012 Texas Instruments Incorporated - http://www.ti.com/
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License version 2 as
+ * published by the Free Software Foundation.
+ *
+ * Last Modified 08/19/2016   mjp
+ */
+
+#include <dt-bindings/pinctrl/am33xx.h>
+
+/* #define BBB_DEV  */
+/* #define GS_GPIO_TESTING   */
+
+&uart2 {
+    pinctrl-names = "default";
+    pinctrl-0 = <&uart2_pins>;
+
+    status = "okay";
+};
+
+&uart3 {
+    pinctrl-names = "default";
+    pinctrl-0 = <&uart3_pins>;
+
+    status = "okay";
+};
+
+&i2c0 {
+    pinctrl-names = "default";
+    pinctrl-0 = <&accelerometer_pins>;
+
+    status = "okay";
+};
+
+&am33xx_pinmux {
+
+    uart2_pins: pinmxuart2_pins {
+        pinctrl-single,pins = <
+/* Note:  What I call "keep alive" the schematic calles "enable" and 
+what I call "enable" the schematic calls "power" */
+            0x130 ( PIN_OUTPUT | MUX_MODE1 ) /* (L18) gmii1_rx_clk/uart2 - tx */
+            0x12c ( PIN_INPUT | MUX_MODE1 )  /* (K18) gmii1_tx_clk/uart2 - rx */
+            0x140 ( PIN_OUTPUT | MUX_MODE7 ) /* (M16) [GPS_RESET] gmii1_rxd0 */
+            0x13c ( PIN_OUTPUT | MUX_MODE7 ) /* (L15) [GPS_ANT_SHUTDOWN] gmii1_rxd1 */
+            0x158 ( PIN_OUTPUT | MUX_MODE7 ) /* (B16) [GPS_KEEP_ALIVE] spi0_d1 */
+            0x148 ( PIN_OUTPUT | MUX_MODE7 ) /* (M17) [GPS_ENABLE] mdio_data */
+            0x1a0 ( PIN_OUTPUT | MUX_MODE7 ) /* (B12) [GPS_FE_SW_CTL_N] */
+            0x1a4 ( PIN_OUTPUT | MUX_MODE7 ) /* (C13) [GPS_FE_SW_CTL_P] */
+/* Ideally, these should be in another block, perhaps the x2spi block 
+   However, for now at least, they need to be setup before the 
+   Modular x2spi driver loads, so I load them here, since this is a built 
+   in kernel driver, they'll be ready as soon as the iosetup script runs.  */
+            0x190 ( PIN_OUTPUT | MUX_MODE7 ) /* (A13) [BB-RX-PLL1-CE] mcasp0_mclkx */
+            0x194 ( PIN_OUTPUT | MUX_MODE7 ) /* (B13) [BB-TX-PLL1-CE] mcasp0_fsx */
+            0x19c ( PIN_OUTPUT | MUX_MODE7 ) /* (C12) [RF-PLL-OUT-EN] mcasp0_ahclkr */
+            0x2c  ( PIN_OUTPUT | MUX_MODE7 ) /* (U12) [RF-EN] ad11 */
+            0x100 ( PIN_OUTPUT | MUX_MODE7 ) /* (G17) [RX-FE-SW-CTRL-N] mmc0_clk */
+            0x104 ( PIN_OUTPUT | MUX_MODE7 ) /* (G18) [RX-FE-SW-CTRL-P] mmc0_cmd */
+            0xfc  ( PIN_OUTPUT | MUX_MODE7 ) /* (G16) [TX-FE-SW-CTRL-N] mmc0_dat0 */
+            0xf8  ( PIN_OUTPUT | MUX_MODE7 ) /* (G15) [TX-FE-SW-CTRL-P] mmc0_dat1 */
+        >;
+    };
+
+    uart3_pins: pinmxuart3_pins {
+        pinctrl-single,pins = <
+            0x138 ( PIN_OUTPUT | MUX_MODE1 ) /* (L16) mii1_rxd2/uart3 - tx */
+            0x134 ( PIN_INPUT | MUX_MODE1 )  /* (K18) gmii1_rxd3/uart3 - rx */
+/* Since this UART is associated with the AS, I'll put this AS related GPIO here */
+            0x1E4 (PIN_OUTPUT | MUX_MODE7)   /* emu0.gpio3_7 */
+            0x1E8 (PIN_OUTPUT | MUX_MODE7)   /* emu1.gpio3_8 */
+        >;
+    };
+
+    accelerometer_pins: pinmxaccelerometer_pins {
+        pinctrl-single,pins = <
+            0x150 (PIN_INPUT | MUX_MODE7 )   /* (A17) [ACCEL_INT1] spi0_sclk */
+            0x154 (PIN_INPUT | MUX_MODE7 )   /* (B17) [ACCEL_INT2] spi0_d0 */
+        >;
+    };
+};
+
+
+/* Tattoo this on the inside of your eyelids!  */
+/* cat /sys/kernel/debug/pinctrl/44e10800.pinmux/pins  */
