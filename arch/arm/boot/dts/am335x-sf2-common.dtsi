@@ -7,7 +7,7 @@
  *
  * Last Modified 04/27/2017   mjp
  */
-
+// device tree REVG
 / {
     cpus {
         cpu@0 {
@@ -19,7 +19,7 @@
         device_type = "memory";
         reg = <0x80000000 0x10000000>; /* 256 MB */
     };
-
+/*
     leds {
         pinctrl-names = "default";
         pinctrl-0 = <&user_leds_s0>;
@@ -68,6 +68,7 @@
             default-state = "on";
         };
     };
+*/
 
     buttons {
         pinctrl-names = "default";
@@ -76,17 +77,39 @@
         compatible = "gpio-keys";
         #address-cells = <1>;
         #size-cells = <0>;
-
-        SOS_button {
+     SOS_button {
             label = "satfi2:button:SOS";
             gpios = <&gpio1 27 GPIO_ACTIVE_HIGH>;
         };
 
         PWR_button {
-            label = "satfi2:button:PWR";
-            gpios = <&gpio2 2 GPIO_ACTIVE_HIGH>;
+          label = "satfi2:button:PWR";
+            gpios = <&gpio0 13 GPIO_ACTIVE_HIGH>; // changed to gpio bank 0 number 13
         };
     };
+
+ gpio_pins: gpio_pins@0 {
+    compatible = "gpio-keys";
+    #address-cells = <1>;
+    #size-cells = <0>;
+    autorepeat;
+
+    pins@0 {
+      label = "WIFI_WAKEUP_1";
+      linux,code = <155>;
+      gpios = <&gpio0 20 GPIO_ACTIVE_LOW>;
+      gpio-key,wakeup;
+    };
+
+  as_wakeup {
+      label = "AS_WAKEUP_1";
+      linux,code = <156>;
+      gpios = <&gpio0 1 GPIO_ACTIVE_LOW>;
+      gpio-key,wakeup;
+    };
+ 
+  
+  };
 
     onewire_device {
         pinctrl-names = "default";
@@ -108,22 +131,25 @@
 &am33xx_pinmux {
     pinctrl-names = "default";
     pinctrl-0 = <&xdma_pins>;
-
+/*
     user_leds_s0: user_leds_s0 {
         pinctrl-single,pins = <
-            AM33XX_IOPAD(0x54, PIN_OUTPUT_PULLDOWN | MUX_MODE7)  /* gpmc_a5.gpio1_21 */
-            AM33XX_IOPAD(0x58, PIN_OUTPUT_PULLUP   | MUX_MODE7)  /* gpmc_a6.gpio1_22 */
-            AM33XX_IOPAD(0x5c, PIN_OUTPUT_PULLDOWN | MUX_MODE7)  /* gpmc_a7.gpio1_23 */
-            AM33XX_IOPAD(0x60, PIN_OUTPUT_PULLUP   | MUX_MODE7)  /* gpmc_a8.gpio1_24 */
-            AM33XX_IOPAD(0x64, PIN_OUTPUT_PULLDOWN | MUX_MODE7)  /* gpmc_a8.gpio1_24 */
-            AM33XX_IOPAD(0x68, PIN_OUTPUT_PULLUP   | MUX_MODE7)  /* gpmc_a8.gpio1_24 */
+            AM33XX_IOPAD(0x54, PIN_OUTPUT_PULLDOWN | MUX_MODE7)  // gpmc_a5.gpio1_21 
+            AM33XX_IOPAD(0x58, PIN_OUTPUT_PULLUP   | MUX_MODE7)  // gpmc_a6.gpio1_22 
+            AM33XX_IOPAD(0x5c, PIN_OUTPUT_PULLDOWN | MUX_MODE7)  // gpmc_a7.gpio1_23 
+            AM33XX_IOPAD(0x60, PIN_OUTPUT_PULLUP   | MUX_MODE7)  // gpmc_a8.gpio1_24 
+            AM33XX_IOPAD(0x64, PIN_OUTPUT_PULLDOWN | MUX_MODE7)  // gpmc_a8.gpio1_24 
+            AM33XX_IOPAD(0x68, PIN_OUTPUT_PULLUP   | MUX_MODE7)  // gpmc_a8.gpio1_24 
         >;
     };
-
+*/
     button_pins: pinmux_button_pins {
         pinctrl-single,pins = <
-            0x6c (PIN_INPUT_PULLUP | MUX_MODE7)     /* gpmc_a1.gpio11_27     SOS */
-            0x90 (PIN_INPUT        | MUX_MODE7)     /* gpmc_advn_ale.gpio2_2 PWR_BUT */
+            0x28 (PIN_INPUT_PULLUP | MUX_MODE7)     /* gpmc_a1.gpio11_27     SOS */ // SOS button changed [T11]
+            0x17c (PIN_INPUT        | MUX_MODE7)     /* gpmc_advn_ale.gpio2_2 PWR_BUT */ //power button change [D17]
+	    0x90 (PIN_INPUT        | MUX_MODE7) // USB_DC_OK
+	    0x78 (PIN_INPUT        | MUX_MODE7) // USB_10V_OK
+
         >;
     };
 
@@ -135,6 +161,12 @@
             0x16c (PIN_INPUT_PULLUP | MUX_MODE7)    /* uart0_rtsn.gpio1[9] PMIC SLEEP */
         >;
     };
+
+ wake_up_pins: pinmux_wifi_wakeup_pin {
+    pinctrl-single,pins = <
+    0x1b4 (PIN_INPUT | MUX_MODE7)  // gpmc_wpn.gpio0_20 
+    >;
+  };
 
     /* Serial Debug Port */
     uart0_pins: pinmux_uart0_pins {
@@ -148,20 +180,27 @@
     uart1_pins: pinmux_uart1_pins {
         pinctrl-single,pins = <
             0x180 (PIN_INPUT  | MUX_MODE0) /* uart1_rxd.gpio0_14  WIFI_RX  */
-            0x184 (PIN_OUTPUT | MUX_MODE0) /* uart1_txd.gpio0_15  WIFI_TX  */
+            0x184 (PIN_OUTPUT_PULLDOWN | MUX_MODE0) /* uart1_txd.gpio0_15  WIFI_TX  */
         >;
     };
 
+/* revg uart2 to marvel WIFI module*/
+ 	uart4_pins: pinmux_uart4_pins {
+        pinctrl-single,pins = <
+            0x70 (PIN_INPUT  | MUX_MODE6) /* uart4_rxd  WIFI_UART2_RX  */
+           0x74 (PIN_OUTPUT_PULLDOWN | MUX_MODE6) /* uart4_txd  WIFI_UART2_TX  */
+       >;
+   };
+
     mmc1_pins: pinmux_mmc1_pins {
         pinctrl-single,pins = <
-            0x20 (PIN_OUTPUT_PULLDOWN   | MUX_MODE7) /* gpmc_ad8.gpio0_22     VDD_3V3_WIFI_EN */
+            0x20 (PIN_OUTPUT_PULLUP   | MUX_MODE7) /* gpmc_ad8.gpio0_22     VDD_3V3_WIFI_EN */
             0x88 (PIN_OUTPUT_PULLDOWN   | MUX_MODE7) /* gpmc_csn3.gpio2_0     WIFI_RESET      */
 
             /* Setup this signals to be tri-stated upon boot so WiFi module boots properly    */
-            0x98  (PIN_INPUT            | MUX_MODE7) /* gpmc_wen.gpio2_4      WIFI_WAKEUP_0   */
-            0x94  (PIN_INPUT            | MUX_MODE7) /* gpmc_oen_ren.gpio2_3  WIFI_WAKEUP_1   */
-            0x178 (PIN_INPUT            | MUX_MODE7) /* uart1_ctsn.gpio0_12   WIFI_CTS        */
-            0x17c (PIN_INPUT            | MUX_MODE7) /* uart1_rtsn.gpio0_13   WIFI_RTS        */
+            0x1b4  (PIN_INPUT            | MUX_MODE7) /* 0_20      WIFI_WAKEUP_1   */
+            0x94  (PIN_INPUT            | MUX_MODE7) /* gpio2_3  WIFI_WAKEUP_0   */
+
         >;
     };
 
@@ -205,6 +244,7 @@
             0x1c (PIN_INPUT_PULLUP | MUX_MODE1) /* gpmc_ad7.mmc1_dat7 */
         >;
     };
+
 };
 
 &uart0 {
@@ -217,6 +257,12 @@
 &uart1 {
     pinctrl-names = "default";
     pinctrl-0 = <&uart1_pins>;
+    status = "okay";
+};
+
+&uart4 {
+    pinctrl-names = "default";
+    pinctrl-0 = <&uart4_pins>;
 
     status = "okay";
 };

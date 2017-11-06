@@ -38,6 +38,21 @@
 	};
 };
 
+&tscadc {
+	status = "okay";
+	tsc {
+		ti,wires = <4>;
+		ti,x-plate-resistance = <200>;
+		ti,coordinate-readouts = <5>;
+		ti,wire-config = <0x00 0x11 0x22 0x33>;
+		ti,charge-delay = <0x400>;
+	};
+
+	adc {
+		ti,adc-channels = <0 1 2 3>;
+	};
+};
+
 /* Only used for TI WiFi module Wl1801
  * #include "am335x-boneblack-wifi-satfi2.dtsi"
  */
