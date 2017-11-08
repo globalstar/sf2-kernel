@@ -19,6 +19,10 @@ struct am335x_control_usb {
 #define AM335X_USB1_CTRL		0x8
 #define AM335x_USB_WKUP			0x0
 
+#define USBPHY_CHGDET_DIS  (1 << 2)
+#define USBPHY_CHGDET_RSTRT    (1 << 3)
+#define USBPHY_CDET_EXTCTL (1 << 10)
+
 #define USBPHY_CM_PWRDN		(1 << 0)
 #define USBPHY_OTG_PWRDN	(1 << 1)
 #define USBPHY_OTGVDET_EN	(1 << 19)
@@ -84,14 +88,14 @@ static void am335x_phy_power(struct phy_control *phy_ctrl, u32 id,
 	if (on) {
 		if (dr_mode == USB_DR_MODE_HOST) {
 			val &= ~(USBPHY_CM_PWRDN | USBPHY_OTG_PWRDN |
-					USBPHY_OTGVDET_EN);
-			val |= USBPHY_OTGSESSEND_EN;
+					USBPHY_OTGVDET_EN | USBPHY_CHGDET_DIS | USBPHY_CHGDET_RSTRT | USBPHY_CDET_EXTCTL);
+			val |= USBPHY_OTGVDET_EN |USBPHY_OTGSESSEND_EN;
 		} else {
-			val &= ~(USBPHY_CM_PWRDN | USBPHY_OTG_PWRDN);
-			val |= USBPHY_OTGVDET_EN | USBPHY_OTGSESSEND_EN;
+			val &= ~(USBPHY_CM_PWRDN | USBPHY_OTG_PWRDN | USBPHY_CHGDET_DIS | USBPHY_CHGDET_RSTRT | USBPHY_CDET_EXTCTL);
+			val |= USBPHY_OTGVDET_EN |USBPHY_OTGSESSEND_EN;
 		}
 	} else {
-		val |= USBPHY_CM_PWRDN | USBPHY_OTG_PWRDN;
+		val |= USBPHY_CM_PWRDN | USBPHY_OTG_PWRDN | USBPHY_CHGDET_DIS | USBPHY_CHGDET_RSTRT | USBPHY_CDET_EXTCTL;
 	}
 
 	writel(val, usb_ctrl->phy_reg + reg);
