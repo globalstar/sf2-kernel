@@ -56,10 +56,10 @@ what I call "enable" the schematic calls "power" */
             0x194 ( PIN_OUTPUT | MUX_MODE7 ) /* (B13) [BB-TX-PLL1-CE] mcasp0_fsx */
             0x19c ( PIN_OUTPUT | MUX_MODE7 ) /* (C12) [RF-PLL-OUT-EN] mcasp0_ahclkr */
             0x2c  ( PIN_OUTPUT | MUX_MODE7 ) /* (U12) [RF-EN] ad11 */
-            0x100 ( PIN_OUTPUT | MUX_MODE7 ) /* (G17) [RX-FE-SW-CTRL-N] mmc0_clk */
-            0x104 ( PIN_OUTPUT | MUX_MODE7 ) /* (G18) [RX-FE-SW-CTRL-P] mmc0_cmd */
-            0xfc  ( PIN_OUTPUT | MUX_MODE7 ) /* (G16) [TX-FE-SW-CTRL-N] mmc0_dat0 */
-            0xf8  ( PIN_OUTPUT | MUX_MODE7 ) /* (G15) [TX-FE-SW-CTRL-P] mmc0_dat1 */
+            0x100 ( PIN_OUTPUT | MUX_MODE7 ) /* (G17) [RX-FE-SW-CTRL-N] mmc0_clk */ //removed in REVG
+            0x104 ( PIN_OUTPUT | MUX_MODE7 ) /* (G18) [RX-FE-SW-CTRL-P] mmc0_cmd */ // removed in REVG
+            0xfc  ( PIN_OUTPUT | MUX_MODE7 ) /* (G16) [TX-FE-SW-CTRL-N] mmc0_dat0 */// removed in REVG
+            0xf8  ( PIN_OUTPUT | MUX_MODE7 ) /* (G15) [TX-FE-SW-CTRL-P] mmc0_dat1 *///removed in REVG
         >;
     };
 
