@@ -356,10 +356,10 @@
         };
 
         vdd2_reg: regulator@3 {
-            /* VDD_CORE voltage limits 0.95V - 1.1V with +/-4% tolerance */
+            /* VDD_CORE voltage limits 1.056V - 1.144V with +/-4% tolerance */
             regulator-name = "vdd_core";
-            regulator-min-microvolt = <912500>;
-            regulator-max-microvolt = <1150000>;
+            regulator-min-microvolt = <1056000>;
+            regulator-max-microvolt = <1144000>;
             regulator-boot-on;
             regulator-always-on;
         };
