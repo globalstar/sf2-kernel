@@ -81,11 +81,12 @@
             label = "satfi2:button:SOS";
             gpios = <&gpio1 27 GPIO_ACTIVE_HIGH>;
         };
-
+/*
         PWR_button {
           label = "satfi2:button:PWR";
             gpios = <&gpio0 13 GPIO_ACTIVE_HIGH>; // changed to gpio bank 0 number 13
         };
+*/
     };
 
  gpio_pins: gpio_pins@0 {
@@ -104,7 +105,7 @@
   as_wakeup {
       label = "AS_WAKEUP_1";
       linux,code = <156>;
-      gpios = <&gpio0 1 GPIO_ACTIVE_LOW>;
+      gpios = <&gpio0 1 GPIO_ACTIVE_HIGH>;
       gpio-key,wakeup;
     };
  
