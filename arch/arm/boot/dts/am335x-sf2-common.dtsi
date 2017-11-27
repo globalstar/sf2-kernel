@@ -73,15 +73,19 @@
     buttons {
         pinctrl-names = "default";
         pinctrl-0 = <&button_pins>;
-
+	
         compatible = "gpio-keys";
+	autorepeat;
         #address-cells = <1>;
         #size-cells = <0>;
-     SOS_button {
+    
+ SOS_button {
             label = "satfi2:button:SOS";
-            gpios = <&gpio0 26 GPIO_ACTIVE_HIGH>;
+	    linux,code = <157>;
+            gpios = <&gpio0 26 GPIO_ACTIVE_LOW>;
 	    gpio-key,wakeup;
         };
+
 /*
         PWR_button {
           label = "satfi2:button:PWR";
@@ -109,6 +113,14 @@
       gpios = <&gpio0 1 GPIO_ACTIVE_HIGH>;
       gpio-key,wakeup;
     };
+/*
+     SOS_button {
+            label = "satfi2:button:SOS";
+	linux,code = <157>;
+            gpios = <&gpio0 26 GPIO_ACTIVE_LOW>;
+	    gpio-key,wakeup;
+        };
+*/
  
   
   };
@@ -147,7 +159,7 @@
 */
     button_pins: pinmux_button_pins {
         pinctrl-single,pins = <
-            0x28 (PIN_INPUT_PULLUP | MUX_MODE7)     /* gpmc_a1.gpio11_27     SOS */ // SOS button changed [T11]
+             0x28 (PIN_INPUT_PULLUP | MUX_MODE7)     /* gpmc_a1.gpio11_27     SOS */ // SOS button changed [T11]
             0x17c (PIN_INPUT        | MUX_MODE7)     /* gpmc_advn_ale.gpio2_2 PWR_BUT */ //power button change [D17]
 	    0x90 (PIN_INPUT        | MUX_MODE7) // USB_DC_OK
 	    0x78 (PIN_INPUT        | MUX_MODE7) // USB_10V_OK
@@ -166,6 +178,7 @@
 
  wake_up_pins: pinmux_wifi_wakeup_pin {
     pinctrl-single,pins = <
+    //0x28 (PIN_INPUT | MUX_MODE7) 
     0x1b4 (PIN_INPUT | MUX_MODE7)  // gpmc_wpn.gpio0_20 
     >;
   };
