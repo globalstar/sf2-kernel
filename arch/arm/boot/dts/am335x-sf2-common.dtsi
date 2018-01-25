@@ -339,7 +339,6 @@
     #interrupt-cells = <2>;
     interrupt-controller;
 
-    ti,system-power-controller;
     ti,en-ck32k-xtal;
 
     vcc1-supply = <&vbat>;
