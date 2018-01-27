@@ -329,7 +329,7 @@
 #include "tps65910.dtsi"
 
 &tps {
-    reg = <0xd2>;
+    reg = <0x2d>;
     interrupt-parent = <&intc>;
     interrupts = < 0 118 0x04 >;
 
@@ -339,7 +339,6 @@
     #interrupt-cells = <2>;
     interrupt-controller;
 
-    ti,system-power-controller;
     ti,en-ck32k-xtal;
 
     vcc1-supply = <&vbat>;
