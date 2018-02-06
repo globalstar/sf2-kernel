@@ -329,7 +329,7 @@
 #include "tps65910.dtsi"
 
 &tps {
-    reg = <0x2d>;
+    reg = <0xd2>;
     interrupt-parent = <&intc>;
     interrupts = < 0 118 0x04 >;
 
